@@ -22,7 +22,7 @@ extension Array where Element == BlockNode {
     }
 }
 
-private extension BlockNode {
+public extension BlockNode {
     init?(unsafeNode: UnsafeNode) {
         switch unsafeNode.nodeType {
         case .blockquote:
@@ -152,7 +152,7 @@ private extension InlineNode {
 
 public typealias UnsafeNode = UnsafeMutablePointer<cmark_node>
 
-private extension UnsafeNode {
+public extension UnsafeNode {
     var nodeType: NodeType {
         let typeString = String(cString: cmark_node_get_type_string(self))
         guard let nodeType = NodeType(rawValue: typeString) else {
@@ -414,7 +414,7 @@ private extension UnsafeNode {
     }
 }
 
-private enum NodeType: String {
+public enum NodeType: String {
     case document
     case blockquote = "block_quote"
     case list
@@ -449,15 +449,15 @@ private enum NodeType: String {
     case taskListItem = "tasklist"
 }
 
-private struct UnsafeNodeSequence: Sequence {
-    struct Iterator: IteratorProtocol {
+public struct UnsafeNodeSequence: Sequence {
+    public struct Iterator: IteratorProtocol {
         private var node: UnsafeNode?
 
         init(_ node: UnsafeNode?) {
             self.node = node
         }
 
-        mutating func next() -> UnsafeNode? {
+        public mutating func next() -> UnsafeNode? {
             guard let node else { return nil }
             defer { self.node = cmark_node_next(node) }
             return node
@@ -466,11 +466,11 @@ private struct UnsafeNodeSequence: Sequence {
 
     private let node: UnsafeNode?
 
-    init(_ node: UnsafeNode?) {
+    public init(_ node: UnsafeNode?) {
         self.node = node
     }
 
-    func makeIterator() -> Iterator {
+    public func makeIterator() -> Iterator {
         .init(node)
     }
 }
